@@ -1,0 +1,27 @@
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: macOS-latest
+    strategy:
+      matrix:
+        destination: ['platform=iOS Simulator,name=iPhone 12 Pro']
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run unit tests
+      run: |
+        set -o pipefail && \
+        xcodebuild -project CombineDemo.xcodeproj \
+        -scheme CombineDemoTests \
+        -destination "${destination}" \
+        test | xcpretty
+      env:
+        destination: ${{ matrix.destination }}
