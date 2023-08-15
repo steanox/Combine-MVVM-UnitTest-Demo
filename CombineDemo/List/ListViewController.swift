@@ -14,8 +14,8 @@ final class ListViewController: UIViewController {
     
     private lazy var contentView = ListView()
     private let viewModel: ListViewModel
-    private var bindings = Set<AnyCancellable>()
     
+    //MARK: 4. Create the cancelables
     
     
     private var dataSource: DataSource!
@@ -52,37 +52,14 @@ final class ListViewController: UIViewController {
     
     private func setUpBindings() {
         func bindViewToViewModel() {
-            contentView.searchTextField.textPublisher
-                .debounce(for: 0.5, scheduler: RunLoop.main)
-                .removeDuplicates()
-                .sink(receiveValue: { [weak self] value in
-                    self?.viewModel.searchText = value.lowercased()
-                })
-                .store(in: &bindings)
+            // MARK: 3. Observe the textfield text
         }
         
         func bindViewModelToView() {
-                viewModel.$players
-                    .receive(on: RunLoop.main)
-                    .sink(receiveValue: { [weak self] _ in
-                        self?.updateSections()
-                    })
-                    .store(in: &bindings)
+            //MARK: 1. Observe number of player
             
-            viewModel.$state
-                .receive(on: RunLoop.main)
-                .sink(receiveValue: { [weak self] state in
-                    switch state {
-                    case .loading:
-                        self?.contentView.startLoading()
-                    case .finishedLoading:
-                        self?.contentView.finishLoading()
-                    case .error:
-                        self?.contentView.finishLoading()
-                        self?.showError()
-                    }
-                })
-                .store(in: &bindings)
+            //MARK: 2. Observe the loading status
+            
         }
         
         bindViewToViewModel()

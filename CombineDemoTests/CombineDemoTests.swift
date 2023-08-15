@@ -28,27 +28,11 @@ class LoginViewModelTests: XCTestCase {
     }
     
     func test_loadingStateWorking(){
-        //condition
-        subject.fetchPlayers()
-        //Given
-        let expected: ListViewModelState = .loading
-        
-        //Output
-        XCTAssertEqual(expected, subject.state)
+        //MARK: 1. Test the loading state
     }
     
     func test_playerFetchIsWorking(){
-        //condition
-        subject.fetchPlayers()
-        let exp = expectation(description: "Fetch Data for 5 seconds")
-        XCTWaiter.wait(for: [exp], timeout: 5.0)
-         
-        //Given
-        let expected: ListViewModelState = .finishedLoading
-        
-        //Output
-        XCTAssertEqual(expected, subject.state)
-        XCTAssertTrue(subject.players.count != 0)
+        // MARK: 2. Test the player numbers
     }
 
   

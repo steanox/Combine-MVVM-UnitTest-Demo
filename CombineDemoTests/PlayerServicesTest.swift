@@ -17,13 +17,7 @@ final class PlayerServicesTest: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     
     func test_NetworkIsNotError(){
-        services.get().sink { result in
-            if case .failure(let message) = result{
-                XCTAssertTrue(true,message.localizedDescription)
-            }
-        } receiveValue: { players in
-            XCTAssertTrue(players.count != 0)
-        }.store(in: &cancellables)
+        //MARK: 1. Test the networking
 
     }
 
