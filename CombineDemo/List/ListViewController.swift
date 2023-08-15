@@ -55,17 +55,19 @@ final class ListViewController: UIViewController {
             contentView.searchTextField.textPublisher
                 .debounce(for: 0.5, scheduler: RunLoop.main)
                 .removeDuplicates()
-                .assign(to: \.searchText, on: viewModel)
+                .sink(receiveValue: { [weak self] value in
+                    self?.viewModel.searchText = value.lowercased()
+                })
                 .store(in: &bindings)
         }
         
         func bindViewModelToView() {
-            viewModel.$players
-                .receive(on: RunLoop.main)
-                .sink(receiveValue: { [weak self] _ in
-                    self?.updateSections()
-                })
-                .store(in: &bindings)
+                viewModel.$players
+                    .receive(on: RunLoop.main)
+                    .sink(receiveValue: { [weak self] _ in
+                        self?.updateSections()
+                    })
+                    .store(in: &bindings)
             
             viewModel.$state
                 .receive(on: RunLoop.main)

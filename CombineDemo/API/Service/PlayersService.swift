@@ -11,7 +11,7 @@ import Combine
 enum ServiceError: Error {
     case url(URLError)
     case urlRequest
-    case decode
+    case decode(String)
 }
 
 protocol PlayersServiceProtocol {
@@ -29,19 +29,6 @@ final class PlayersService: PlayersServiceProtocol {
         let onCancel: () -> Void = { dataTask?.cancel() }
         
         
-//                return URLSession.shared.dataTaskPublisher(for: urlRequest!)
-//                    .tryMap { response in
-//                        return response.data
-//                    }
-//                    .decode(type: Records.self, decoder: JSONDecoder())
-//                    .map({ records in
-//                        return records.fields
-//                    })
-//                    .eraseToAnyPublisher()
-        
-        
-        
-        
         return Future<[Player], Error> { [weak self] promise in
             dataTask = URLSession.shared.dataTask(with: URL(string: "https://api.airtable.com/v0/appKXnS9aI2go4cQj/players?api_key=keyW9iw7rCrEtnyWK")!) { (data,req, error) in
                 guard let data = data else {
@@ -54,18 +41,19 @@ final class PlayersService: PlayersServiceProtocol {
                     let response = try JSONDecoder().decode(Response.self, from: data)
                     promise(.success(response.records.map {$0.fields }))
                 } catch let DecodingError.dataCorrupted(context) {
-                    print(context)
+                    let errMessage = "Error data Corrupted: \(context.debugDescription)"
+                    promise(.failure(ServiceError.decode(errMessage)))
                 } catch let DecodingError.keyNotFound(key, context) {
-                    print("Key '\(key)' not found:", context.debugDescription)
-                    print("codingPath:", context.codingPath)
+                    let errMessage = "Error key not found: \(key) \(context.debugDescription)"
+                    promise(.failure(ServiceError.decode(errMessage)))
                 } catch let DecodingError.valueNotFound(value, context) {
-                    print("Value '\(value)' not found:", context.debugDescription)
-                    print("codingPath:", context.codingPath)
+                    let errMessage = "Error Value Not Found: \(value) \(context.debugDescription)"
+                    promise(.failure(ServiceError.decode(errMessage)))
                 } catch let DecodingError.typeMismatch(type, context)  {
-                    print("Type '\(type)' mismatch:", context.debugDescription)
-                    print("codingPath:", context.codingPath)
+                    let errMessage = "Erro Coding Path Mismatch: \(type) \(context.debugDescription)"
+                    promise(.failure(ServiceError.decode(errMessage)))
                 } catch {
-                    promise(.failure(ServiceError.decode))
+                    promise(.failure(ServiceError.decode("Unknown Error")))
                 }
             }
         }

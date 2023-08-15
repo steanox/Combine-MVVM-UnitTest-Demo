@@ -22,8 +22,8 @@ final class ListViewModel {
     @Published var searchText: String = ""
     @Published private(set) var players: [Player] = []
     @Published private(set) var state: ListViewModelState = .loading
-    private var originalData: [Player] = []
     
+    private var originalData: [Player] = []
     private let playersService: PlayersServiceProtocol
     private var bindings = Set<AnyCancellable>()
     

@@ -37,7 +37,7 @@ class LoginViewModelTests: XCTestCase {
         XCTAssertEqual(expected, subject.state)
     }
     
-    func test_finishedloadingStateWorking(){
+    func test_playerFetchIsWorking(){
         //condition
         subject.fetchPlayers()
         let exp = expectation(description: "Fetch Data for 5 seconds")
@@ -48,7 +48,9 @@ class LoginViewModelTests: XCTestCase {
         
         //Output
         XCTAssertEqual(expected, subject.state)
+        XCTAssertTrue(subject.players.count != 0)
     }
+
   
 }
 
